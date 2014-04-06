@@ -1,0 +1,110 @@
+<!doctype html>
+<head>
+<link rel="stylesheet" type="text/css" href="Scss/clock_scss.css">
+</head>
+<body>
+<div id="clockId">
+  <div id="viewZone">
+    <em id="hours">00</em> :
+    <em id="minutes">00</em> :
+    <em id="seconds">00</em>
+  </div>
+  <div id="buttonId">
+    <button id="pause"><div id="pauseId"></div></button>
+    <button id="resume"><div class="resumeClass"></div></button>
+    <button id="reset"><div id="stopPlayId"></div></button>
+  </div>
+</div>
+<script>
+
+function bindEvent(elementId, methodName, event, className){ 
+  document.getElementById(elementId).addEventListener(event, className[methodName].bind(className)); 
+}
+
+window.onload=function() {
+  Clock.start();
+  bindEvent("pause", "pause", "click", Clock);
+  bindEvent("resume", "resume", "click", Clock);
+  bindEvent("reset", "reset", "click", Clock);
+}
+
+var Clock = {
+  hour : document.getElementById("hours"),
+  min : document.getElementById("minutes"),
+  sec : document.getElementById("seconds"),
+  totalHours : 0,
+  totalMin : 0,
+  totalSec : 0,
+  counter : 0,
+  timerOn : 0,
+  totalMills : 0,
+
+  set: function(){
+  	++this.totalMills;
+  	if(this.totalHours == 99 & this.totalMin == 59 & this.totalSec == 60) {
+  		this.reset();
+	}
+  	if(this.totalMills == 1){
+    	this.totalSec++;
+    	this.sec.innerHTML = this.formatTime(this.totalSec%60);
+    	this.totalMills = 0;
+  	}
+  	if(this.totalSec == 60){
+    	this.totalMin++;
+    	this.min.innerHTML = this.formatTime(this.totalMin%60);
+    	this.totalSec = 0;
+  	}
+  	if(this.totalMin == 60){
+    	this.totalHours++;
+    	this.hour.innerHTML = this.formatTime(this.totalHours%60);
+    	this.totalMin = 0;
+  	}
+  },
+
+	start: function(){
+	  if(this.timerOn == 1) {
+	   return; 
+	  }
+	  else
+	  {
+	  	var thisObject = this;
+	     this.counter = setInterval(
+	     	function(){ 
+	     		thisObject.set() 
+	     	}, 1000
+	     );
+	    this.timerOn = 1;
+	  }
+	},
+
+	pause: function() {
+		console.log(this.timerOn);
+	    clearInterval(this.counter);
+	    this.timerOn = 0;
+	},
+
+	resume: function() {
+	   this.start(); 
+	},
+
+	reset: function() {
+	    clearInterval(this.counter);
+    	this.totalHours = 0;
+    	this.totalMin = 0;
+    	this.totalSec = 0;
+    	this.hour.innerHTML = "00";
+    	this.min.innerHTML = "00";
+    	this.sec.innerHTML = "00";
+		this.timerOn = 0;
+	 	this.start(); 
+	},
+
+	formatTime: function(val){
+		return (val < 10) ? "0" + val : val;
+	}
+
+};
+
+</script>
+</body>
+</html>
