@@ -1,4 +1,4 @@
-Timer
+myTimer
 =====
 
 Timer js practice
